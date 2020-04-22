@@ -8,7 +8,7 @@
 use crate::{Error, LabeledPolynomial, PCRandomness, Polynomial, ToString, Vec};
 use algebra_core::msm::{FixedBaseMSM, VariableBaseMSM};
 use algebra_core::{
-    AffineCurve, Group, One, PairingEngine, PrimeField, ProjectiveCurve, UniformRand, Zero,
+    AffineCurve, Group, One, PairingEngine, ProjectiveCurve, UniformRand, Zero,
 };
 use rand_core::RngCore;
 #[cfg(feature = "parallel")]
@@ -18,6 +18,7 @@ use core::marker::PhantomData;
 
 mod data_structures;
 pub use data_structures::*;
+use algebra_core::fields::PrimeField;
 
 pub(crate) mod optional_rng;
 
@@ -432,7 +433,7 @@ impl<E: PairingEngine> KZG10<E> {
     }
 }
 
-fn skip_leading_zeros_and_convert_to_bigints<F: PrimeField>(
+fn skip_leading_zeros_and_convert_to_bigints<F: PrimeField >(
     p: &Polynomial<F>,
 ) -> (usize, Vec<F::BigInt>) {
     let mut num_leading_zeros = 0;
@@ -462,8 +463,8 @@ mod tests {
     use algebra::test_rng;
     use algebra::Bls12_377;
     use algebra::Bls12_381;
-    use algebra::MNT6;
     use algebra::SW6;
+    use algebra_core::curves::models::mnt6::MNT6;
 
     type KZG_Bls12_381 = KZG10<Bls12_381>;
 
@@ -610,7 +611,6 @@ mod tests {
     fn end_to_end_test() {
         end_to_end_test_template::<Bls12_377>().expect("test failed for bls12-377");
         end_to_end_test_template::<Bls12_381>().expect("test failed for bls12-381");
-        end_to_end_test_template::<MNT6>().expect("test failed for MNT6");
         end_to_end_test_template::<SW6>().expect("test failed for SW6");
     }
 
@@ -618,14 +618,12 @@ mod tests {
     fn linear_polynomial_test() {
         linear_polynomial_test_template::<Bls12_377>().expect("test failed for bls12-377");
         linear_polynomial_test_template::<Bls12_381>().expect("test failed for bls12-381");
-        linear_polynomial_test_template::<MNT6>().expect("test failed for MNT6");
         linear_polynomial_test_template::<SW6>().expect("test failed for SW6");
     }
     #[test]
     fn batch_check_test() {
         batch_check_test_template::<Bls12_377>().expect("test failed for bls12-377");
         batch_check_test_template::<Bls12_381>().expect("test failed for bls12-381");
-        batch_check_test_template::<MNT6>().expect("test failed for MNT6");
         batch_check_test_template::<SW6>().expect("test failed for SW6");
     }
 }

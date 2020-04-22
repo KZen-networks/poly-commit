@@ -1,10 +1,9 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 //! A crate for polynomial commitment schemes.
-#![deny(unused_import_braces, unused_qualifications, trivial_casts)]
+//#![deny(unused_import_braces, unused_qualifications, trivial_casts)]
 #![deny(trivial_numeric_casts, private_in_public, variant_size_differences)]
 #![deny(stable_features, unreachable_pub, non_shorthand_field_patterns)]
-#![deny(unused_attributes, unused_mut, missing_docs)]
-#![deny(unused_imports)]
+#![deny(unused_attributes, unused_mut)]
 #![deny(renamed_and_removed_lints, stable_features, unused_allocation)]
 #![deny(unused_comparisons, bare_trait_objects, unused_must_use, const_err)]
 #![forbid(unsafe_code)]
@@ -14,7 +13,7 @@ extern crate derivative;
 #[macro_use]
 extern crate bench_utils;
 
-use algebra_core::Field;
+use algebra_core::fields::Field;
 use core::iter::FromIterator;
 pub use ff_fft::DensePolynomial as Polynomial;
 use rand_core::RngCore;
@@ -52,6 +51,8 @@ macro_rules! eprintln {
     () => {};
     ($($arg: tt)*) => {};
 }
+
+pub mod super_marlin;
 /// The core [[KZG10]][kzg] construction.
 ///
 /// [kzg]: http://cacr.uwaterloo.ca/techreports/2010/cacr2010-10.pdf
@@ -457,21 +458,22 @@ pub mod tests {
         let max_degree =
             max_degree.unwrap_or(rand::distributions::Uniform::from(2..=64).sample(rng));
         let pp = PC::setup(max_degree, rng)?;
-
-        for _ in 0..num_iters {
+        println!("max_degree: {:}", max_degree.clone());
+        for i in 0..num_iters {
+            println!("num iter: {:?}", i.clone());
             let supported_degree = supported_degree
                 .unwrap_or(rand::distributions::Uniform::from(1..=max_degree).sample(rng));
             assert!(
                 max_degree >= supported_degree,
                 "max_degree < supported_degree"
             );
+
             let mut polynomials = Vec::new();
             let mut degree_bounds = if enforce_degree_bounds {
                 Some(Vec::new())
             } else {
                 None
             };
-
             let mut labels = Vec::new();
             println!("Sampled supported degree");
 
@@ -482,6 +484,7 @@ pub mod tests {
                 let label = format!("Test{}", i);
                 labels.push(label.clone());
                 let degree = rand::distributions::Uniform::from(1..=supported_degree).sample(rng);
+                println!("degree: {:}", degree.clone());
                 let poly = Polynomial::rand(degree, rng);
 
                 let degree_bound = if let Some(degree_bounds) = &mut degree_bounds {
@@ -499,6 +502,7 @@ pub mod tests {
                     Some(num_points_in_query_set)
                 };
                 println!("Hiding bound: {:?}", hiding_bound);
+                println!("degree_bound degree: {:?}", degree_bound.clone());
 
                 polynomials.push(LabeledPolynomial::new_owned(
                     label,
@@ -508,6 +512,7 @@ pub mod tests {
                 ))
             }
             println!("supported degree: {:?}", supported_degree);
+
             println!("num_points_in_query_set: {:?}", num_points_in_query_set);
             let (ck, vk) = PC::trim(
                 &pp,
@@ -517,7 +522,7 @@ pub mod tests {
             println!("Trimmed");
 
             let (comms, rands) = PC::commit(&ck, &polynomials, Some(rng))?;
-
+            println!("committed");
             // Construct query set
             let mut query_set = QuerySet::new();
             let mut values = Evaluations::new();
@@ -526,8 +531,12 @@ pub mod tests {
                 let point = F::rand(rng);
                 for (i, label) in labels.iter().enumerate() {
                     query_set.insert((label.clone(), point));
+                    println!("TEST1");
                     let value = polynomials[i].evaluate(point);
+                    println!("TEST2");
                     values.insert((label.clone(), point), value);
+                    println!("TEST3");
+
                 }
             }
             println!("Generated query set");
@@ -734,7 +743,7 @@ pub mod tests {
         PC: PolynomialCommitment<F>,
     {
         let info = TestInfo {
-            num_iters: 100,
+            num_iters: 1,
             max_degree: None,
             supported_degree: None,
             num_polynomials: 1,
@@ -751,7 +760,7 @@ pub mod tests {
         PC: PolynomialCommitment<F>,
     {
         let info = TestInfo {
-            num_iters: 100,
+            num_iters: 6,
             max_degree: Some(2),
             supported_degree: Some(1),
             num_polynomials: 1,
@@ -768,12 +777,12 @@ pub mod tests {
         PC: PolynomialCommitment<F>,
     {
         let info = TestInfo {
-            num_iters: 100,
+            num_iters: 1,
             max_degree: None,
             supported_degree: None,
             num_polynomials: 1,
             enforce_degree_bounds: true,
-            max_num_queries: 1,
+            max_num_queries: 2,
             ..Default::default()
         };
         test_template::<F, PC>(info)
@@ -785,7 +794,7 @@ pub mod tests {
         PC: PolynomialCommitment<F>,
     {
         let info = TestInfo {
-            num_iters: 100,
+            num_iters: 1,
             max_degree: Some(3),
             supported_degree: Some(2),
             num_polynomials: 1,
@@ -802,7 +811,7 @@ pub mod tests {
         PC: PolynomialCommitment<F>,
     {
         let info = TestInfo {
-            num_iters: 100,
+            num_iters: 6,
             max_degree: None,
             supported_degree: None,
             num_polynomials: 1,
@@ -819,7 +828,7 @@ pub mod tests {
         PC: PolynomialCommitment<F>,
     {
         let info = TestInfo {
-            num_iters: 100,
+            num_iters: 1,
             max_degree: None,
             supported_degree: None,
             num_polynomials: 2,
@@ -836,7 +845,7 @@ pub mod tests {
         PC: PolynomialCommitment<F>,
     {
         let info = TestInfo {
-            num_iters: 100,
+            num_iters: 1,
             max_degree: None,
             supported_degree: None,
             num_polynomials: 10,
@@ -853,7 +862,7 @@ pub mod tests {
         PC: PolynomialCommitment<F>,
     {
         let info = TestInfo {
-            num_iters: 100,
+            num_iters: 1,
             max_degree: None,
             supported_degree: None,
             num_polynomials: 10,
@@ -870,8 +879,8 @@ pub mod tests {
         PC: PolynomialCommitment<F>,
     {
         let info = TestInfo {
-            num_iters: 100,
-            max_degree: None,
+            num_iters: 1,
+            max_degree: Some(3),
             supported_degree: None,
             num_polynomials: 1,
             enforce_degree_bounds: false,
@@ -887,7 +896,7 @@ pub mod tests {
         PC: PolynomialCommitment<F>,
     {
         let info = TestInfo {
-            num_iters: 100,
+            num_iters: 1,
             max_degree: None,
             supported_degree: None,
             num_polynomials: 2,
@@ -904,7 +913,7 @@ pub mod tests {
         PC: PolynomialCommitment<F>,
     {
         let info = TestInfo {
-            num_iters: 100,
+            num_iters: 1,
             max_degree: None,
             supported_degree: None,
             num_polynomials: 2,
