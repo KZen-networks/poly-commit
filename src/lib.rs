@@ -511,6 +511,7 @@ pub mod tests {
                     hiding_bound,
                 ))
             }
+
             println!("supported degree: {:?}", supported_degree);
 
             println!("num_points_in_query_set: {:?}", num_points_in_query_set);
@@ -519,8 +520,9 @@ pub mod tests {
                 supported_degree,
                 degree_bounds.as_ref().map(|s| s.as_slice()),
             )?;
-            println!("Trimmed");
 
+
+            println!("Trimmed");
             let (comms, rands) = PC::commit(&ck, &polynomials, Some(rng))?;
             println!("committed");
             // Construct query set
@@ -531,16 +533,12 @@ pub mod tests {
                 let point = F::rand(rng);
                 for (i, label) in labels.iter().enumerate() {
                     query_set.insert((label.clone(), point));
-                    println!("TEST1");
                     let value = polynomials[i].evaluate(point);
-                    println!("TEST2");
                     values.insert((label.clone(), point), value);
-                    println!("TEST3");
 
                 }
             }
             println!("Generated query set");
-
             let opening_challenge = F::rand(rng);
             let proof = PC::batch_open(&ck, &polynomials, &query_set, opening_challenge, &rands)?;
             let result = PC::batch_check(

@@ -55,7 +55,6 @@ impl PolynomialCommitment<FpCurv> for SuperMarlinPoly {
             return Err(Error::TrimmingDegreeTooLarge);
         }
         //TODO:  check enforced_degree_bounds
-
         let mut coef_vec: Vec<FE> = Vec::new();
         let mut i = 0;
         while i < supported_degree {
@@ -73,6 +72,7 @@ impl PolynomialCommitment<FpCurv> for SuperMarlinPoly {
             uni_params : pp.clone(),
             supported_degree ,
         };
+
         Ok((ck, vk))
 
     }
@@ -102,6 +102,7 @@ impl PolynomialCommitment<FpCurv> for SuperMarlinPoly {
             poly_com_vec.push(labeled_comm);
             let randomness = Randomness{f_q: rand};
             randomness_vec.push(randomness);
+
 
         }
         Ok((poly_com_vec, randomness_vec))
