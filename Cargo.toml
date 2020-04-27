@@ -29,12 +29,12 @@ derivative = { version = "2", features = [ "use_core" ] }
 
 [dependencies.curv]
 git = "https://github.com/KZen-networks/curv"
-tag = "v0.2.5"
-features = ["ec_jubjub"]
+tag = "v0.2.6"
+features = ["ec_bls12_381"]
 
 [dependencies.class_group]
 git = "https://github.com/KZen-networks/class"
-tag = "v0.4.9"
+tag = "v0.4.10"
 
 [dev-dependencies]
 rand = { version = "0.7", default-features = false }
