@@ -264,6 +264,7 @@ pub trait PolynomialCommitment<F: Field>: Sized {
         // `query_to_labels_map`.
         let proofs: Vec<_> = proof.clone().into();
         assert_eq!(proofs.len(), query_to_labels_map.len());
+        println!("proofs.len {:?}", proofs.len());
 
         let mut result = true;
         for ((query, labels), proof) in query_to_labels_map.into_iter().zip(proofs) {
