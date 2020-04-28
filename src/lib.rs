@@ -285,7 +285,10 @@ pub trait PolynomialCommitment<F: Field>: Sized {
                 comms.push(commitment);
                 values.push(*v_i);
             }
-println!("POINT");
+            println!("comms.len {:?}", comms.len());
+            println!("values.len {:?}", values.len());
+
+            println!("POINT");
             let proof_time = start_timer!(|| "Checking per-query proof");
             result &= Self::check(vk, comms, *query, values, &proof, opening_challenge)?;
             end_timer!(proof_time);
