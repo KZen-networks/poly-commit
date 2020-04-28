@@ -34,7 +34,8 @@ features = ["ec_bls12_381"]
 
 [dependencies.class_group]
 git = "https://github.com/KZen-networks/class"
-tag = "v0.4.13"
+branch = "debug_branch"
+#tag = "v0.4.13"
 
 [dev-dependencies]
 rand = { version = "0.7", default-features = false }
