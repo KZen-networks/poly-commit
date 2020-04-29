@@ -38,7 +38,7 @@ pub trait PCVerifierKey: Clone + core::fmt::Debug {
 
 /// Defines the minimal interface of commitments for any polynomial
 /// commitment scheme.
-pub trait PCCommitment: Clone + algebra_core::ToBytes {
+pub trait PCCommitment: Clone + algebra_core::ToBytes + core::fmt::Debug {
     /// Outputs a non-hiding commitment to the zero polynomial.
     fn empty() -> Self;
 
@@ -151,7 +151,7 @@ impl<'a, F: Field> LabeledPolynomial<'a, F> {
 }
 
 /// A commitment along with information about its degree bound (if any).
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct LabeledCommitment<C: PCCommitment> {
     label: PolynomialLabel,
     commitment: C,

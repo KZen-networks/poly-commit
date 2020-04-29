@@ -118,7 +118,7 @@ pub trait PolynomialCommitment<F: Field>: Sized {
     /// The evaluation proof for a single point.
     type Proof: PCProof + Clone;
     /// The evaluation proof for a query set.
-    type BatchProof: Clone + From<Vec<Self::Proof>> + Into<Vec<Self::Proof>>;
+    type  BatchProof: Clone + From<Vec<Self::Proof>> + Into<Vec<Self::Proof>>;
     /// The error type for the scheme.
     type Error: algebra_core::Error + From<Error>;
 
@@ -263,7 +263,6 @@ pub trait PolynomialCommitment<F: Field>: Sized {
         // Implicit assumption: proofs are order in same manner as queries in
         // `query_to_labels_map`.
         let proofs: Vec<_> = proof.clone().into();
-        assert_eq!(proofs.len(), query_to_labels_map.len());
         println!("proofs.len {:?}", proofs.len());
 
         let mut result = true;
@@ -485,7 +484,7 @@ pub mod tests {
             let num_points_in_query_set =
                 rand::distributions::Uniform::from(1..=max_num_queries).sample(rng);
             for i in 0..num_polynomials {
-                let label = format!("Test{}", i);
+                let label = format!("Test{}", num_polynomials - i);
                 labels.push(label.clone());
                 let degree = rand::distributions::Uniform::from(1..=supported_degree).sample(rng);
                 println!("degree: {:}", degree.clone());
@@ -528,6 +527,7 @@ pub mod tests {
 
             println!("Trimmed");
             let (comms, rands) = PC::commit(&ck, &polynomials, Some(rng))?;
+            println!("comms: {:?}", comms.clone());
             println!("committed");
             // Construct query set
             let mut query_set = QuerySet::new();
@@ -610,7 +610,7 @@ pub mod tests {
             let num_points_in_query_set =
                 rand::distributions::Uniform::from(1..=max_num_queries).sample(rng);
             for i in 0..num_polynomials {
-                let label = format!("Test{}", i);
+                let label = format!("Test{}", num_polynomials - i);
                 labels.push(label.clone());
                 let degree = rand::distributions::Uniform::from(1..=supported_degree).sample(rng);
                 let poly = Polynomial::rand(degree, rng);

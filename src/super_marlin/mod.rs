@@ -201,7 +201,6 @@ mod tests {
     fn single_poly_test() {
         use crate::tests::*;
         single_poly_test::<FpCurv, PC>().expect("test failed for fp_curv_single_poly");
-
     }
 
     #[test]
