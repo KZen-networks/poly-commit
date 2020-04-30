@@ -20,9 +20,9 @@ license = "MIT/Apache-2.0"
 edition = "2018"
 
 [dependencies]
-algebra-core = { git = "https://github.com/KZen-networks/zexe/", default-features = false, branch = "fp_curv" }
-ff-fft = { git = "https://github.com/KZen-networks/zexe/", default-features = false , branch = "fp_curv"}
-bench-utils = { git = "https://github.com/KZen-networks/zexe/" , branch = "fp_curv"}
+algebra-core = { git = "https://github.com/KZen-networks/zexe/", default-features = false }
+ff-fft = { git = "https://github.com/KZen-networks/zexe/", default-features = false}
+bench-utils = { git = "https://github.com/KZen-networks/zexe/"}
 rand_core = { version = "0.5", default-features = false }
 rayon = { version = "1", optional = true }
 derivative = { version = "2", features = [ "use_core" ] }
@@ -34,12 +34,11 @@ features = ["ec_bls12_381"]
 
 [dependencies.class_group]
 git = "https://github.com/KZen-networks/class"
-branch = "debug_branch"
-#tag = "v0.4.13"
+tag = "v0.4.13"
 
 [dev-dependencies]
 rand = { version = "0.7", default-features = false }
-algebra = { git = "https://github.com/KZen-networks/zexe/", default-features = false, features = ["full"] , branch = "fp_curv"}
+algebra = { git = "https://github.com/KZen-networks/zexe/", default-features = false, features = ["full"] }
 
 [profile.release]
 opt-level = 3
