@@ -263,7 +263,6 @@ pub trait PolynomialCommitment<F: Field>: Sized {
         // Implicit assumption: proofs are order in same manner as queries in
         // `query_to_labels_map`.
         let proofs: Vec<_> = proof.clone().into();
-        println!("proofs.len {:?}", proofs.len());
 
         let mut result = true;
         for ((query, labels), proof) in query_to_labels_map.into_iter().zip(proofs) {
@@ -284,10 +283,8 @@ pub trait PolynomialCommitment<F: Field>: Sized {
                 comms.push(commitment);
                 values.push(*v_i);
             }
-            println!("comms.len {:?}", comms.len());
-            println!("values.len {:?}", values.len());
 
-            println!("POINT");
+
             let proof_time = start_timer!(|| "Checking per-query proof");
             result &= Self::check(vk, comms, *query, values, &proof, opening_challenge)?;
             end_timer!(proof_time);
@@ -527,7 +524,7 @@ pub mod tests {
 
             println!("Trimmed");
             let (comms, rands) = PC::commit(&ck, &polynomials, Some(rng))?;
-            println!("comms: {:?}", comms.clone());
+
             println!("committed");
             // Construct query set
             let mut query_set = QuerySet::new();
